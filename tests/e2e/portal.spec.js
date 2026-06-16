@@ -233,7 +233,7 @@ test("admin unlock accepts @github private key format", async ({ page }) => {
 test("tutorial and quick check are visible to users", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial")).toContainText("Quick operator tutorial");
   await expect(page.locator("#tutorial")).toContainText("For a quick operation check");
-  await expect(page.locator("#tutorial")).toContainText("must succeed.");
 });
 });
