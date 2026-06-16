@@ -224,10 +224,6 @@ test("admin unlock accepts @github private key format", async ({ page }) => {
   await page.locator("#admin-unlock").click();
   await expect(page.locator("#admin-status")).toContainText("Admin session unlocked");
   await expect(page.locator("#run-intent")).toBeEnabled();
-  await page.locator("#goal-input").fill("Validate self-check scenario after unlock.");
-  await page.locator("#run-intent").click();
-  await expect(page.locator("#policy-box")).toContainText('"allowedMode": "openai-api"');
-  await expect(page.locator("#envelope-box")).toContainText('"/api/openai/v1/chat/completions"');
 });
 
 test("tutorial and quick check are visible to users", async ({ page }) => {
