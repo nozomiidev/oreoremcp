@@ -10,7 +10,7 @@ const ADMIN_PUBLIC_KEY_JWK = {
 const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_SESSION_TTL_MS = 45 * 60 * 1000;
 const ADMIN_MIN_PASSPHRASE_LENGTH = 8;
-const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["@github"]);
+const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["@github", "RSA-OAEP-256"]);
 const BASE64_OR_BASE64URL = /^[A-Za-z0-9+/=_-]+$/;
 const REQUIRED_PRIVATE_KEY_FIELDS = ["d", "dp", "dq", "e", "n", "p", "q", "qi"];
 

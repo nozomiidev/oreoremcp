@@ -215,10 +215,21 @@ test("admin unlock succeeds with provided private key", async ({ page }) => {
   await page.goto("/");
   await page.locator("#operator-account").fill(ADMIN_OPERATOR);
   await page.locator("#admin-passphrase").fill("oreoremcp-admin");
-  await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY_GITHUB);
+  await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY);
   await page.locator("#admin-unlock").click();
   await expect(page.locator("#admin-status")).toContainText("Admin session unlocked");
   await expect(page.locator("#workspace-status")).toContainText("Session expires in");
+});
+
+test("admin unlock accepts @github private key format", async ({ page }) => {
+  await clearLocalStorageState(page);
+  await page.goto("/");
+  await page.locator("#operator-account").fill(ADMIN_OPERATOR);
+  await page.locator("#admin-passphrase").fill("oreoremcp-admin");
+  await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY_GITHUB);
+  await page.locator("#admin-unlock").click();
+  await expect(page.locator("#admin-status")).toContainText("Admin session unlocked");
+  await expect(page.locator("#run-intent")).toBeEnabled();
 });
 
 test("admin unlock rejects non-@github key algorithm", async ({ page }) => {
@@ -239,17 +250,6 @@ test("admin unlock requires private key body", async ({ page }) => {
   await page.locator("#admin-private-key").fill("");
   await page.locator("#admin-unlock").click();
   await expect(page.locator("#admin-status")).toContainText("Admin unlock failed");
-});
-
-test("admin unlock accepts @github private key format", async ({ page }) => {
-  await clearLocalStorageState(page);
-  await page.goto("/");
-  await page.locator("#operator-account").fill(ADMIN_OPERATOR);
-  await page.locator("#admin-passphrase").fill("oreoremcp-admin");
-  await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY_GITHUB);
-  await page.locator("#admin-unlock").click();
-  await expect(page.locator("#admin-status")).toContainText("Admin session unlocked");
-  await expect(page.locator("#run-intent")).toBeEnabled();
 });
 
 test("tutorial and quick check are visible to users", async ({ page }) => {

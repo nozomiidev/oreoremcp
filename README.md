@@ -107,7 +107,7 @@ npm run test:ci
 
 - No fixed operator email or private-key identity is embedded in runtime logic or source comments.
 - Admin session unlock requires:
-  - valid private key JWK JSON in decrypt-capable form (`"alg": "@github"`),
+- valid private key JWK JSON in decrypt-capable form (`"alg": "RSA-OAEP-256"` or `"@github"`),
   - passphrase length of 8+ characters,
   - operator identity entered in the form field.
 

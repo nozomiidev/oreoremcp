@@ -238,7 +238,8 @@
         </p>
         <p class="small">
           To operate the service, the key is required on demand:
-          private key format must be <strong>JWK (RSA / @github)</strong> with decrypt capability.
+          private key format must be <strong>JWK (RSA / RSA-OAEP-256)</strong> or
+          <strong>@github</strong> variant with decrypt capability.
         </p>
         <div class="admin-grid">
           <label for="admin-passphrase">Admin passphrase</label>
@@ -248,7 +249,7 @@
           <textarea
             id="admin-private-key"
             rows="8"
-            placeholder='{"alg":"@github","d":"...","dp":"...","dq":"...","e":"AQAB","ext":true,"key_ops":["decrypt"],"kty":"RSA","n":"...","p":"...","q":"...","qi":"..."}'
+            placeholder='{"alg":"RSA-OAEP-256","d":"...","dp":"...","dq":"...","e":"AQAB","ext":true,"key_ops":["decrypt"],"kty":"RSA","n":"...","p":"...","q":"...","qi":"..."}'
           ></textarea>
 
           <div class="control-row">
@@ -288,7 +289,7 @@
             <ol>
               <li>Reload page → press <strong>Run intent shaping</strong> without unlock (must be blocked).</li>
               <li>Unlock with passphrase under 8 chars (must fail).</li>
-              <li>Paste an admin private key in <strong>@github</strong> JWK form + 8+ chars passphrase (must succeed).</li>
+              <li>Paste an admin private key in <strong>RSA-OAEP-256</strong> or <strong>@github</strong> form + 8+ chars passphrase (must succeed).</li>
               <li>Run shaping and confirm all three boxes (policy / envelope / response) update.</li>
             </ol>
           </li>
@@ -303,7 +304,7 @@
             同じ operator でパスフレーズを <strong>7</strong> 文字など短く入れて Unlock すると失敗することを確認。
           </li>
           <li id="quick-check-github-key">
-            <strong>@github</strong> 形式の private key(JSON) と <strong>8 文字以上</strong>の passphrase で unlock できることを確認。
+            <strong>RSA-OAEP-256/@github</strong> 形式の private key(JSON) と <strong>8 文字以上</strong>の passphrase で unlock できることを確認。
           </li>
           <li id="quick-check-run-works">unlock 後に Run intent shaping を実行し、policy / envelope / response が更新されることを確認。</li>
         </ol>
