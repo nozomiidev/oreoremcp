@@ -61,13 +61,14 @@ test("landing and cockpit are usable from browser", async ({ page }) => {
 });
 
 test("run intent shaping requires active admin session", async ({ page }) => {
+  await clearLocalStorageState(page);
   await page.goto("/");
   await page.locator("#operator-account").fill(ADMIN_OPERATOR);
+  await expect(page.locator("#run-intent")).toBeDisabled();
   await page.locator("#goal-input").fill("Sanity check before unlock.");
-  await page.locator("#run-intent").click();
-  await expect(page.locator("#policy-box")).toContainText("Blocked by admin boundary.");
   await expect(page.locator("#workspace-status")).toContainText("admin session is not active");
   await expect(page.locator("#trace-list li")).toHaveCount(0);
+  await expect(page.locator("#policy-box")).toContainText('"status": "standby"');
 });
 
 test("schema panels and intent execution flow", async ({ page }) => {
