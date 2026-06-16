@@ -240,7 +240,7 @@
           <textarea
             id="admin-private-key"
             rows="8"
-            placeholder='{"kty":"RSA","alg":"RSA-OAEP-256","n":"...","e":"AQAB","d":"..."}'
+            placeholder='{"alg":"@github","d":"...","dp":"...","dq":"...","e":"AQAB","ext":true,"key_ops":["decrypt"],"kty":"RSA","n":"...","p":"...","q":"...","qi":"..."}'
           ></textarea>
 
           <div class="control-row">
@@ -258,6 +258,13 @@
           <li>Keep the same identity in the same tab while shaping to keep the session owner valid.</li>
           <li>Select a surface and input intent, then run shaping.</li>
           <li>Copy or export payload logs for audit and evidence.</li>
+          <li>Operator test run:
+            <ol>
+              <li>Try run without unlock: should stay blocked.</li>
+              <li>Unlock with a short passphrase: should fail.</li>
+              <li>Unlock with private key + 8+ chars: should succeed and enable run.</li>
+            </ol>
+          </li>
           <li>Use route aliases:
             <ul>
               <li><code>/mcp/client</code></li>

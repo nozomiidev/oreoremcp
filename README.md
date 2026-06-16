@@ -23,6 +23,9 @@ The page runs on GitHub Pages and works as a polished landing + protocol cockpit
   - local persistence
   - JSON export
   - copy envelope payload
+- Operator safety:
+  - admin unlock requires private key + passphrase
+  - admin-boundary is session owner-driven (operator identity is never hardcoded)
 - Unit + e2e tests.
 
 ## Intent shaping and guard behavior
@@ -96,7 +99,7 @@ npm run test:ci
 ## Environment rule for this local workspace
 
 - The workspace assumes the operator safety boundary is enforced at runtime by the session owner identity.
-- Do not run this project in another browser profile account while editing or executing actions here.
+- For manual operator actions, use your dedicated browser account/session.
 - Keep development, testing, and admin operations within the same local user session to avoid cross-account drift.
 - Do not use another email identity or another browser profile window while creating test traces for this workspace.
 
@@ -127,6 +130,7 @@ The workspace assumes the operator safety boundary is enforced at runtime by the
 - Boundary account mode:
   - set operator to a stable test identity (example: `admin-operator@local.test`)
   - run a sample prompt and confirm policy summary and envelope are produced.
+  - confirm `Admin session unlocked` requires both passphrase and valid private key.
 - Non-session-owner mode:
   - set operator to a different identity from the active session
   - confirm `Run intent shaping` is disabled and workspace status shows boundary block.

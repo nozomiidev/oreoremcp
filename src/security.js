@@ -10,6 +10,7 @@ const ADMIN_PUBLIC_KEY_JWK = {
 const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_SESSION_TTL_MS = 45 * 60 * 1000;
 const ADMIN_MIN_PASSPHRASE_LENGTH = 8;
+const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["RSA-OAEP-256", "@github"]);
 
 const encoder = new TextEncoder();
 let cachedPublicKey = null;
@@ -98,7 +99,12 @@ async function importPublicKey(overrideKey) {
 }
 
 function parsePrivateKey(rawKey) {
-  const parsed = typeof rawKey === "string" ? JSON.parse(rawKey) : rawKey;
+  let parsed;
+  try {
+    parsed = typeof rawKey === "string" ? JSON.parse(rawKey) : rawKey;
+  } catch {
+    throw new Error("Private key input format is invalid.");
+  }
   if (!parsed || typeof parsed !== "object") {
     throw new Error("Private key input format is invalid.");
   }
@@ -107,6 +113,19 @@ function parsePrivateKey(rawKey) {
   }
   if (!parsed.d || !parsed.n || !parsed.e || !parsed.p || !parsed.q || !parsed.dp || !parsed.dq || !parsed.qi) {
     throw new Error("Private key is incomplete.");
+  }
+  const alg = parsed.alg || "RSA-OAEP-256";
+  if (!ALLOWLIST_PRIVATE_KEY_ALGS.has(alg)) {
+    throw new Error("Unsupported private key algorithm.");
+  }
+  if (!Array.isArray(parsed.key_ops) || !parsed.key_ops.includes("decrypt")) {
+    throw new Error("Private key must allow decrypt usage.");
+  }
+  if (alg === "@github") {
+    parsed = {
+      ...parsed,
+      alg: "RSA-OAEP-256"
+    };
   }
   return parsed;
 }

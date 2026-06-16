@@ -393,7 +393,7 @@ function setButtonTransientState(button, text) {
 function exportTrace() {
   const payload = {
     generatedAt: new Date().toISOString(),
-    operatorBoundary: "registered-admin",
+    operatorBoundary: "session-boundary",
     records: history
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
