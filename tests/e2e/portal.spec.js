@@ -232,4 +232,3 @@ test("tutorial and quick check are visible to users", async ({ page }) => {
   await expect(page.locator("#tutorial")).toContainText("Quick operator tutorial");
   await expect(page.locator("#tutorial")).toContainText("For a quick operation check");
 });
-});
