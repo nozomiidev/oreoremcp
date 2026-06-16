@@ -10,7 +10,7 @@ const ADMIN_PUBLIC_KEY_JWK = {
 const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_SESSION_TTL_MS = 45 * 60 * 1000;
 const ADMIN_MIN_PASSPHRASE_LENGTH = 8;
-const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["RSA-OAEP-256", "@github"]);
+const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["@github"]);
 const BASE64_OR_BASE64URL = /^[A-Za-z0-9+/=_-]+$/;
 const REQUIRED_PRIVATE_KEY_FIELDS = ["d", "dp", "dq", "e", "n", "p", "q", "qi"];
 
@@ -47,6 +47,36 @@ function isBase64UrlLike(value) {
   return typeof value === "string" && value.length > 0 && BASE64_OR_BASE64URL.test(value);
 }
 
+function readSessionStorage() {
+  if (typeof sessionStorage !== "undefined") {
+    const raw = sessionStorage.getItem(ADMIN_SESSION_KEY);
+    if (raw) return raw;
+  }
+  if (typeof localStorage !== "undefined") {
+    return localStorage.getItem(ADMIN_SESSION_KEY);
+  }
+  return null;
+}
+
+function clearSessionStorage() {
+  if (typeof sessionStorage !== "undefined") {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  }
+  if (typeof localStorage !== "undefined") {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+  }
+}
+
+function persistSession(storageValue) {
+  if (typeof sessionStorage !== "undefined") {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, storageValue);
+    return;
+  }
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(ADMIN_SESSION_KEY, storageValue);
+  }
+}
+
 export function getAdminSessionKey() {
   return ADMIN_SESSION_KEY;
 }
@@ -73,7 +103,7 @@ export function isAdminSession(session) {
 
 export function getAdminSession() {
   try {
-    const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+    const raw = readSessionStorage();
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return isAdminSession(parsed) ? parsed : null;
@@ -83,11 +113,11 @@ export function getAdminSession() {
 }
 
 function persistAdminSession(session) {
-  localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
+  persistSession(JSON.stringify(session));
 }
 
 export function clearAdminSession() {
-  localStorage.removeItem(ADMIN_SESSION_KEY);
+  clearSessionStorage();
 }
 
 async function importPublicKey(overrideKey) {
@@ -120,19 +150,20 @@ function parsePrivateKey(rawKey) {
   if (!REQUIRED_PRIVATE_KEY_FIELDS.every((key) => isBase64UrlLike(parsed[key]))) {
     throw new Error("Private key is incomplete.");
   }
-  const alg = parsed.alg || "RSA-OAEP-256";
+  const alg = parsed.alg;
+  if (typeof alg !== "string" || !alg.trim()) {
+    throw new Error("Private key algorithm is missing.");
+  }
   if (!ALLOWLIST_PRIVATE_KEY_ALGS.has(alg)) {
     throw new Error("Unsupported private key algorithm.");
   }
   if (!Array.isArray(parsed.key_ops) || !parsed.key_ops.includes("decrypt")) {
     throw new Error("Private key must allow decrypt usage.");
   }
-  if (alg === "@github") {
-    parsed = {
-      ...parsed,
-      alg: "RSA-OAEP-256"
-    };
-  }
+  parsed = {
+    ...parsed,
+    alg: "RSA-OAEP-256"
+  };
   return parsed;
 }
 

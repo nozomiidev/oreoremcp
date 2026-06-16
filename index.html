@@ -228,13 +228,17 @@
       <section class="policy-note surface" id="admin-gate">
         <h2>Administrator gate</h2>
         <p class="small">
-          Before running intent shaping, unlock the operator session with your private key and passphrase.
+          Before running intent shaping, you must unlock the operator session with your private key and passphrase.
           This keeps execution mode and history behavior under a local admin session instead of a fixed
           account value in the UI.
         </p>
         <p class="small">
           The service does not ship with any fixed operator email identity; only operator-boundaries created from your current session
           are used.
+        </p>
+        <p class="small">
+          To operate the service, the key is required on demand:
+          private key format must be <strong>JWK (RSA / @github)</strong> with decrypt capability.
         </p>
         <div class="admin-grid">
           <label for="admin-passphrase">Admin passphrase</label>
@@ -257,6 +261,9 @@
 
       <section class="policy-note surface" id="tutorial">
         <h2>Quick operator tutorial</h2>
+        <p class="small">
+          Run these steps in order from the main page once per tab:
+        </p>
         <ol>
           <li>Set your operator identity and unlock admin session with a private key + passphrase.</li>
           <li>Keep the same identity in the same tab while shaping to keep the session owner valid.</li>
@@ -285,6 +292,20 @@
               <li>Run shaping and confirm all three boxes (policy / envelope / response) update.</li>
             </ol>
           </li>
+        </ol>
+      </section>
+
+      <section class="policy-note surface" id="user-self-check">
+        <h2>ユーザ向け軽量セルフチェック</h2>
+        <ol id="quick-self-check">
+          <li id="quick-check-blocked">ページを開いた直後、実行前に <strong>Run intent shaping</strong> を押して、ブロックされることを確認。</li>
+          <li id="quick-check-short-pass">
+            同じ operator でパスフレーズを <strong>7</strong> 文字など短く入れて Unlock すると失敗することを確認。
+          </li>
+          <li id="quick-check-github-key">
+            <strong>@github</strong> 形式の private key(JSON) と <strong>8 文字以上</strong>の passphrase で unlock できることを確認。
+          </li>
+          <li id="quick-check-run-works">unlock 後に Run intent shaping を実行し、policy / envelope / response が更新されることを確認。</li>
         </ol>
       </section>
 

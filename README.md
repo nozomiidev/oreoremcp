@@ -107,9 +107,15 @@ npm run test:ci
 
 - No fixed operator email or private-key identity is embedded in runtime logic or source comments.
 - Admin session unlock requires:
-  - valid private key JWK JSON in decrypt-capable form (`"alg": "@github"` / `"RSA-OAEP-256"`),
+  - valid private key JWK JSON in decrypt-capable form (`"alg": "@github"`),
   - passphrase length of 8+ characters,
   - operator identity entered in the form field.
+
+### Admin identity policy
+
+- Do not hardcode any operator email (including dedicated accounts such as `nozomidevbusin`) in source code, HTML, scripts, or repository data.
+- The operator identity is entered by the operator in runtime and is persisted only as an internal session hash.
+- If you use a dedicated account on a fixed browser profile, treat it as an operational convention outside code (browser input only).
 
 ## Note
 
@@ -150,6 +156,9 @@ The workspace assumes the operator safety boundary is enforced at runtime by the
   - unlock must succeed and `Run intent shaping` becomes enabled.
 - After successful unlock, run one sample prompt and confirm:
   - `#policy-box`, `#envelope-box`, `#response-box` all update.
+- Confirm landing page guidance is visible:
+  - section `#user-self-check` and list `#quick-self-check` appear,
+  - `#quick-check-blocked`, `#quick-check-short-pass`, `#quick-check-github-key`, `#quick-check-run-works` exist.
 
 - Non-session-owner mode:
   - set operator to a different identity from the active session
