@@ -99,9 +99,17 @@ npm run test:ci
 ## Environment rule for this local workspace
 
 - The workspace assumes the operator safety boundary is enforced at runtime by the session owner identity.
-- For manual operator actions, use your dedicated browser account/session.
+- For manual operator actions, use your dedicated browser profile/session and avoid mixing sessions while running.
 - Keep development, testing, and admin operations within the same local user session to avoid cross-account drift.
-- Do not use another email identity or another browser profile window while creating test traces for this workspace.
+- Do not use another browser profile window or another operator identity while creating test traces for this workspace.
+
+## Security note
+
+- No fixed operator email or private-key identity is embedded in runtime logic or source comments.
+- Admin session unlock requires:
+  - valid private key JWK JSON in decrypt-capable form (`"alg": "@github"` / `"RSA-OAEP-256"`),
+  - passphrase length of 8+ characters,
+  - operator identity entered in the form field.
 
 ## Note
 
@@ -128,9 +136,21 @@ The workspace assumes the operator safety boundary is enforced at runtime by the
 ### 2) Safety and governance validation
 
 - Boundary account mode:
-  - set operator to a stable test identity (example: `admin-operator@local.test`)
+  - set operator to a stable local test identity (example: `your-operator@local.test`)
   - run a sample prompt and confirm policy summary and envelope are produced.
   - confirm `Admin session unlocked` requires both passphrase and valid private key.
+
+### 2.5) User self-check (2 minutes)
+
+- Without any unlock, press "Run intent shaping" and confirm:
+  - status message indicates blocking by admin boundary.
+- Enter short passphrase (7 chars) and valid key shape:
+  - unlock must fail.
+- Enter 8+ char passphrase with `@github` private key format:
+  - unlock must succeed and `Run intent shaping` becomes enabled.
+- After successful unlock, run one sample prompt and confirm:
+  - `#policy-box`, `#envelope-box`, `#response-box` all update.
+
 - Non-session-owner mode:
   - set operator to a different identity from the active session
   - confirm `Run intent shaping` is disabled and workspace status shows boundary block.

@@ -60,6 +60,16 @@ test("landing and cockpit are usable from browser", async ({ page }) => {
   await expect(page.locator("#playground")).toBeInViewport();
 });
 
+test("run intent shaping requires active admin session", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#operator-account").fill(ADMIN_OPERATOR);
+  await page.locator("#goal-input").fill("Sanity check before unlock.");
+  await page.locator("#run-intent").click();
+  await expect(page.locator("#policy-box")).toContainText("Blocked by admin boundary.");
+  await expect(page.locator("#workspace-status")).toContainText("admin session is not active");
+  await expect(page.locator("#trace-list li")).toHaveCount(0);
+});
+
 test("schema panels and intent execution flow", async ({ page }) => {
   await gotoWithAdminSession(page);
   await page.locator("#persona").selectOption("mcp-server");
@@ -188,7 +198,7 @@ test("admin unlock requires valid passphrase and private key", async ({ page }) 
   await page.goto("/");
   await page.locator("#operator-account").fill(ADMIN_OPERATOR);
   await page.locator("#admin-passphrase").fill("1234");
-  await page.locator("#admin-private-key").fill("{\"kty\":\"RSA\",\"n\":\"bad\"}");
+  await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY_GITHUB);
   await page.locator("#admin-unlock").click();
   await expect(page.locator("#admin-status")).toContainText("Admin unlock failed");
 });
@@ -212,4 +222,17 @@ test("admin unlock accepts @github private key format", async ({ page }) => {
   await page.locator("#admin-private-key").fill(ADMIN_PRIVATE_KEY_GITHUB);
   await page.locator("#admin-unlock").click();
   await expect(page.locator("#admin-status")).toContainText("Admin session unlocked");
+  await expect(page.locator("#run-intent")).toBeEnabled();
+  await page.locator("#goal-input").fill("Validate self-check scenario after unlock.");
+  await page.locator("#run-intent").click();
+  await expect(page.locator("#policy-box")).toContainText('"allowedMode": "openai-api"');
+  await expect(page.locator("#envelope-box")).toContainText('"/api/openai/v1/chat/completions"');
+});
+
+test("tutorial and quick check are visible to users", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#tutorial")).toBeVisible();
+  await expect(page.locator("#tutorial")).toContainText("For a quick operation check");
+  await expect(page.locator("#tutorial")).toContainText("must succeed.");
+});
 });

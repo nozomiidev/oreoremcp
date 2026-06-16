@@ -11,6 +11,8 @@ const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_SESSION_TTL_MS = 45 * 60 * 1000;
 const ADMIN_MIN_PASSPHRASE_LENGTH = 8;
 const ALLOWLIST_PRIVATE_KEY_ALGS = new Set(["RSA-OAEP-256", "@github"]);
+const ALPHANUM_DASH_UNDERSCORE = /^[A-Za-z0-9_-]+$/;
+const REQUIRED_PRIVATE_KEY_FIELDS = ["d", "dp", "dq", "e", "n", "p", "q", "qi"];
 
 const encoder = new TextEncoder();
 let cachedPublicKey = null;
@@ -39,6 +41,10 @@ function isEqualBytes(left, right) {
     result |= left[i] ^ right[i];
   }
   return result === 0;
+}
+
+function isBase64UrlLike(value) {
+  return typeof value === "string" && value.length > 0 && ALPHANUM_DASH_UNDERSCORE.test(value);
 }
 
 export function getAdminSessionKey() {
@@ -111,7 +117,7 @@ function parsePrivateKey(rawKey) {
   if (parsed.kty !== "RSA") {
     throw new Error("Private key must be RSA.");
   }
-  if (!parsed.d || !parsed.n || !parsed.e || !parsed.p || !parsed.q || !parsed.dp || !parsed.dq || !parsed.qi) {
+  if (!REQUIRED_PRIVATE_KEY_FIELDS.every((key) => isBase64UrlLike(parsed[key]))) {
     throw new Error("Private key is incomplete.");
   }
   const alg = parsed.alg || "RSA-OAEP-256";

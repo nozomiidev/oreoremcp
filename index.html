@@ -232,6 +232,10 @@
           This keeps execution mode and history behavior under a local admin session instead of a fixed
           account value in the UI.
         </p>
+        <p class="small">
+          The service does not ship with any fixed operator email identity; only operator-boundaries created from your current session
+          are used.
+        </p>
         <div class="admin-grid">
           <label for="admin-passphrase">Admin passphrase</label>
           <input id="admin-passphrase" type="password" placeholder="Minimum 8 characters" />
@@ -272,6 +276,14 @@
               <li><code>/api/openai/v1/chat/completions</code></li>
               <li><code>/openaiapi</code>, <code>/opeaiapi</code>, <code>/oprenaiapi</code></li>
             </ul>
+          </li>
+          <li>For a quick operation check:
+            <ol>
+              <li>Reload page → press <strong>Run intent shaping</strong> without unlock (must be blocked).</li>
+              <li>Unlock with passphrase under 8 chars (must fail).</li>
+              <li>Paste an admin private key in <strong>@github</strong> JWK form + 8+ chars passphrase (must succeed).</li>
+              <li>Run shaping and confirm all three boxes (policy / envelope / response) update.</li>
+            </ol>
           </li>
         </ol>
       </section>
