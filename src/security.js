@@ -7,7 +7,6 @@ const ADMIN_PUBLIC_KEY_JWK = {
   n: "zG2r-pRPKB7Httrcu-OYHrliBYxzQzdjRAC6fT7IP9m-O8rpqk2CHAHdFT0MhNgkac58N45CUPQdbQRHxBIS2yjUhbicRbvi7QX_1f5hZK2afMJLdeihTsUhpnA7g38P4OaDeg9iZSppK3EBddq7con4cmOnpKhJFaEM5Pm_N8F4doe-QF-kicQJehPoH3_jCMraZDD8SxYL5E6opvLKvsYssgvTtwMqNNq1EpXXs5KKxPkcVo8U2ZFjbx2TaEfbB7II0lXvCNvkP77RbPyb5OHGXlSd8DfQ8HBBNstJOFNS0-mXTe1tWh9UYkVzFlN4bxb-pN9M7_sw__zrXer_73AxbFV0Czt95LHqHqF-4bdNMflOuUM50M5x2X0DvizUtqVoEnazIoa9dP1hu0tVGVaJzl5Cbt_YH36JXyCKRyPR1e-g1xKA33JLk0XATUsxsGETK6vJtKHwLyzzJWjGY_ghNOYRxPtJXIna_pMfUR9ufYGg5QcJNTT319BwZqljd9MylvyhnW4y3VwIVcwQbVS_Hw2bB63PkmKe063SssPLmqWF7if7Guy8zDn9A2RplFq97kOrxDNPuHD1q_DofDGsLTTO5PRdfiWe11FGUGq00-c0pjQZhs5JiRbS2Ml93-e_bINGgH-4HOlObB9cjl3ZLmL4sPUeRdwCYON5828"
 };
 
-const ADMIN_OPERATOR_EMAIL_HASH = "e56087074b1a2f48b5cc4ca26f8ec1135a8f82842574d0b16cefa92091a92cd2";
 const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_SESSION_TTL_MS = 45 * 60 * 1000;
 const ADMIN_MIN_PASSPHRASE_LENGTH = 8;
@@ -41,10 +40,6 @@ function isEqualBytes(left, right) {
   return result === 0;
 }
 
-export function getAdminBoundaryHash() {
-  return ADMIN_OPERATOR_EMAIL_HASH;
-}
-
 export function getAdminSessionKey() {
   return ADMIN_SESSION_KEY;
 }
@@ -59,13 +54,6 @@ export async function sha256Hex(value) {
   }
   const digest = await crypto.subtle.digest("SHA-256", encoder.encode(String(value || "")));
   return uint8ToHex(new Uint8Array(digest));
-}
-
-export async function isRegisteredOperator(email) {
-  const normalized = normalizeOperator(email);
-  if (!normalized) return false;
-  const hash = await sha256Hex(normalized);
-  return hash === ADMIN_OPERATOR_EMAIL_HASH;
 }
 
 export function isAdminSession(session) {
@@ -144,9 +132,6 @@ export async function unlockAdminSession({ operator, passphrase, privateKeyText 
   }
   if (!privateKeyText || !String(privateKeyText).trim()) {
     throw new Error("Private key text is required.");
-  }
-  if (!(await isRegisteredOperator(normalizedOperator))) {
-    throw new Error("Operator identity is not registered for this workspace.");
   }
 
   const privateKeyJwk = parsePrivateKey(privateKeyText);

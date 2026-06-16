@@ -16,7 +16,7 @@ The page runs on GitHub Pages and works as a polished landing + protocol cockpit
   - `openai-api`: external OpenAI-like contract (`/api/openai/v1/chat/completions`) that always routes through the cockpit.
 - Clear separation of the three public surfaces.
 - Intent shaping and filter pipeline before output.
-- Account boundary guard with `nozomidevbusin@gmail.com`.
+- Account boundary guard uses an operator session created from the unlock flow.
 - Visible protocol contracts for each surface.
 - Debug/admin ergonomics:
   - audit log list
@@ -28,7 +28,7 @@ The page runs on GitHub Pages and works as a polished landing + protocol cockpit
 ## Intent shaping and guard behavior
 
 - Sanitization removes dangerous control text (`ignore previous instructions`, script tags, control chars, etc.).
-- Boundary guard blocks operators when checked and the email is not `nozomidevbusin@gmail.com`.
+- Boundary guard blocks operators when the active session owner and operator field do not match.
 - Every request creates:
   - signed envelope (public surface contract)
   - policy object (risk signals + intent)
@@ -84,10 +84,10 @@ npm run test:ci
 
 ## Operational rule included
 
-- Default boundary operator: `nozomidevbusin@gmail.com`
+- Boundary guard is enforced by default and cannot be disabled from UI.
 - If guard is enabled, different addresses are blocked in runtime.
   - In this build, the boundary guard is enforced by default and cannot be disabled from UI.
-  - Keep all debug/admin operations and browser-based checks on the account bound to `nozomidevbusin@gmail.com`.
+  - Keep all debug/admin operations and browser-based checks in the same execution context to avoid cross-session drift.
   - Do not execute this service tasks in another user session or Chrome profile during development.
 - The workspace lock is enforced per-browser-profile at runtime:
   - when one OREO REMCP window owns the local operator lock, concurrent windows cannot execute `Run intent shaping`.
@@ -95,7 +95,7 @@ npm run test:ci
 
 ## Environment rule for this local workspace
 
-- The operator identity is intentionally pinned to `nozomidevbusin@gmail.com`.
+- The workspace assumes the operator safety boundary is enforced at runtime by the session owner identity.
 - Do not run this project in another browser profile account while editing or executing actions here.
 - Keep development, testing, and admin operations within the same local user session to avoid cross-account drift.
 - Do not use another email identity or another browser profile window while creating test traces for this workspace.
@@ -103,8 +103,7 @@ npm run test:ci
 ## Note
 
 Local validation and CI run on Node.js 20+.
-The workspace assumes the operator safety boundary is enforced at runtime with
-`nozomidevbusin@gmail.com` as the operator identity.
+The workspace assumes the operator safety boundary is enforced at runtime by the session owner identity.
 
 ## Verification checklist (for this product level)
 
@@ -126,10 +125,10 @@ The workspace assumes the operator safety boundary is enforced at runtime with
 ### 2) Safety and governance validation
 
 - Boundary account mode:
-  - set operator to `nozomidevbusin@gmail.com`
+  - set operator to a stable test identity (example: `admin-operator@local.test`)
   - run a sample prompt and confirm policy summary and envelope are produced.
-- Non-boundary account mode:
-  - set operator to other email
+- Non-session-owner mode:
+  - set operator to a different identity from the active session
   - confirm `Run intent shaping` is disabled and workspace status shows boundary block.
 - Multi-window governance:
   - open `/` and fill boundary account in two tabs/windows on same browser profile.

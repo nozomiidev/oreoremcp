@@ -151,7 +151,7 @@
           <input id="operator-account" type="email" placeholder="operator@domain" />
           <label class="checkbox-row">
             <input id="guard-toggle" type="checkbox" checked disabled />
-            <span>Boundary guard is always enabled for this workspace.</span>
+            <span>Session guard is always enabled: operator identity is bound after private-key unlock.</span>
           </label>
           <p id="account-status" class="muted-block"></p>
           <p id="workspace-status" class="muted-block"></p>
@@ -240,7 +240,7 @@
           <textarea
             id="admin-private-key"
             rows="8"
-            placeholder='{"kty":"RSA","n":"...","e":"AQAB","d":"..."}'
+            placeholder='{"kty":"RSA","alg":"RSA-OAEP-256","n":"...","e":"AQAB","d":"..."}'
           ></textarea>
 
           <div class="control-row">
@@ -254,7 +254,8 @@
       <section class="policy-note surface" id="tutorial">
         <h2>Quick operator tutorial</h2>
         <ol>
-          <li>Set your operator account and unlock admin session using your private key.</li>
+          <li>Set your operator identity and unlock admin session with a private key + passphrase.</li>
+          <li>Keep the same identity in the same tab while shaping to keep the session owner valid.</li>
           <li>Select a surface and input intent, then run shaping.</li>
           <li>Copy or export payload logs for audit and evidence.</li>
           <li>Use route aliases:
@@ -271,8 +272,8 @@
       <section class="policy-note surface" id="policy">
         <h2>Operational rule</h2>
         <p>
-          The operator boundary is stored as an internal workspace identity.
-          If the session is locked, non-registered operators or parallel windows are rejected before request shaping.
+          The operator boundary is stored as an internal workspace identity created from the entered operator identity.
+          If the session is locked, a mismatched operator identity or parallel windows are rejected before request shaping.
         </p>
         <p>
           A local operator lock keeps a single-window workflow active per account session, so parallel

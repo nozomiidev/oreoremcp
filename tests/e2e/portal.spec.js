@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { test, expect } from "@playwright/test";
 
-const ADMIN_OPERATOR = "nozomidevbusin@gmail.com";
+const ADMIN_OPERATOR = "admin-operator@local.test";
 const ADMIN_SESSION_KEY = "oreoremcp.adminSession";
 const ADMIN_PRIVATE_KEY = `{"alg":"RSA-OAEP-256","d":"Gh1YfuY7RnDIKn_C-u2UHTipYPQUNV35_FHrgNxoUF_MgW7mcq78E__Y8kGeO8owvKN4EtDFf_nvWGHXmSCF8CFDJOH0dKQP1R-TEw8v-eCDf7SCV0mkcZ-VMOHdeGre6GgKG6mjdDD6xmXlPdz3XSZq6pH4dHxa-bxdHVMaLlE0xk-I6khNiJvWahXo7T01D4Z6Z5oqYJ0sX7n8qXcSl1RRmV0Raquo1J-ryfgCWho6R_dau2QD0ddU0HkCv6uOO2lu3w_DPWp5ufryXe3XLGH7KUm981XuBwkQC6PkcqGSTyfkADx4X67o5LTigtOe6vIRDZbJCU8Zb1or5w-CKiWAQKuWp2BoayCSHaGBx4B5xJEVZUy3qLPqQ72aEn1-jBUqrS_4XNHU0v22GORWcRklt7giBPxnKTMRpWOlJEezCXqViVNZ5RXPz8ckXXVlxOPX_XBtFP4tWSNVg_pjOXr2VnVpC0SxpREh-l3ps-wdI7fLFMtIpyGl2F22B12FkMqdSCuz3_j7I37va9pxPUFlEzU_Sg99iOOXkFHa7PQ0VEv1_yMNpN3cbLKNK84mXx8mD8iTS2qPPWiPixvJwG7mV5QJh7VpKF_7OiGN6-oyyl7gmqwyb_bd3qdOAL-5hhTfotqKTGt6NDNz4ZK_bWMJcUKK9u5MAZeOlTVAD4E","dp":"RSSi1uwzNyhlF8J0pmmiesvRGkXna7rgXoAyDRmYEO6dpBSj5CJNINFdwVPSaQbLjCda2gUs21P0N0ihpFAotOCiQlpo27aP-hknk1zSkdDdikvgT9-vICGr_kqGqAUFM4W5uRJWqaDqgo3GHVyceSQTlGVaAzN9Eo16vzfI3aBZ-ScRU6wnOQSmnp_ezNw7uusbtnH6ERBX61xs4na562sM7U3UFVw74sNesjSBH95TosKw7aIEhhENb8s-BcPfWFazZPTskaMlCZIap91RphmoOMWh_DYOJ0UnnyBN4q0oXg_JEMSKEU11gpr7l_7zW9Fp6resqwuFqNnfdzctUQ","dq":"tiZhWH2XHmRw-QGJ9xKQbdI4F0Lp5yCLzLj5CNgyaLAtEZx9QShWqYN-w4ejcgGyrd7LjrVUXuqgCrZ7cQ6SuurhgzgBtNGsXGixtfnwWlHyblmzmD8AgHmg9uCXzSzfYtfv3FiO2MFjARcG4g63MSjF_DR58PNk9lUJEFV9NLklh2i_QTkjbfGf8_ZOAF4y3iAC9cD61qvUQmS7tvErEmxfxrFaYNbsWU20gUP3uUCFubIcRcKabQfQ1zuH-K3mMk8wXH7zjF2cIvi8-NjlF1V0mqdfUSXeGJZwAj7DIcr3iOXZNzcsgqjL4kSGTN7YEALNetYCKCw2y6YPfq5rMQ","e":"AQAB","ext":true,"key_ops":["decrypt"],"kty":"RSA","n":"zG2r-pRPKB7Httrcu-OYHrliBYxzQzdjRAC6fT7IP9m-O8rpqk2CHAHdFT0MhNgkac58N45CUPQdbQRHxBIS2yjUhbicRbvi7QX_1f5hZK2afMJLdeihTsUhpnA7g38P4OaDeg9iZSppK3EBddq7con4cmOnpKhJFaEM5Pm_N8F4doe-QF-kicQJehPoH3_jCMraZDD8SxYL5E6opvLKvsYssgvTtwMqNNq1EpXXs5KKxPkcVo8U2ZFjbx2TaEfbB7II0lXvCNvkP77RbPyb5OHGXlSd8DfQ8HBBNstJOFNS0-mXTe1tWh9UYkVzFlN4bxb-pN9M7_sw__zrXer_73AxbFV0Czt95LHqHqF-4bdNMflOuUM50M5x2X0DvizUtqVoEnazIoa9dP1hu0tVGVaJzl5Cbt_YH36JXyCKRyPR1e-g1xKA33JLk0XATUsxsGETK6vJtKHwLyzzJWjGY_ghNOYRxPtJXIna_pMfUR9ufYGg5QcJNTT319BwZqljd9MylvyhnW4y3VwIVcwQbVS_Hw2bB63PkmKe063SssPLmqWF7if7Guy8zDn9A2RplFq97kOrxDNPuHD1q_DofDGsLTTO5PRdfiWe11FGUGq00-c0pjQZhs5JiRbS2Ml93-e_bINGgH-4HOlObB9cjl3ZLmL4sPUeRdwCYON5828","p":"-6Jm-UbEy7yew_ITAToDeYzZiHVj_U2eyGU5nwrgpa6ND2K2_4T3D1TvF8qZ8R5uIT_mi24SblOyXs2-55MBxwqtlxicWSdm7rrDj7M0aK2J4eHmPLr0DldJlLvyncq8dCg4ZEBdp2aG7gj-c9AlnJw2790tRXOqG6wH6fkQVwTFVo-sONPqPOYtw9EblthuasX6ymbREum5M1pNi9J1K2aWPRxWemAA5UN2A69NDjVGL2aFSvz1xAgCvdIF7ZpmhzGjXULHkiKq_8KluoMmJbDSbg61wygQyynzGJBkH1F40vdYJX71u97jdJPR3nyUOddd_1cbOC8X1Mbp1rKdvw","q":"z_mca7swcvD9Pubatmz0rYGROprCMF3Hv0MQZgzr-VtxRRaIB1bgLVvmUueIQ9nKKnBoUT9ZrbDG1Ueo3gKl9qr9XVUbBJhyxjLTqDm5D22yfsxyT0015Zjq9JpK5DQqsJ9JsahJL4gGU5AW4DGi9GrN8NaJNIN9VFfcBdPFwx0RJrWrAoxlIYxlaOn2gxkuqFertrZ_S8YoaJ5N02CJdKPe2VvrzAmssm1k68IU57CJMyIdTTqcG4mDzWhGoS8h_-PlYZqtgAwrTOPVtVbAV-Qv5qYylnWNs3EfMR8bFEVr5n6zTlU2MVw7HiERrBzDJaIIxpM6su_qxQ5O78B2UQ","qi":"PHBkaHioI1YXf7SWnBRUyEHDEQly_Ldh5t2YQjhuoTcrN_59Gj7Eyf10vs2rX3fdEFyCA4ZXDWFbUSgPIZ5KFPvMsVfxjRIBrxD0aItjepFpV_rdP62KqF5AK1LlqtGhSbghvSyXrvZiHvV02rqpzGG7ZLnyXUs6_YdUP0gLNNZpi7dBO1KODZKM9NyO2C9RpaZwgAajqXz9Q8Gmci3Fnf3JCuUwsZzBhnK0OjDJfpfYiXhoRY82OMioHQmuYGahTgbm8qOlH9koIkOLJWoFAYOxfnwcUC7eQapPchMg5VzKLefYZ_Zgh32rt7zpI37_6NzWhIO8cbKNMJqXRX9-wg"}`;
 
@@ -170,12 +170,12 @@ test("single-window lock blocks a second active OREO REMCP window", async ({ pag
   await pageB.close();
 });
 
-test("guard blocks unknown operator account", async ({ page }) => {
+test("guard blocks session owner mismatch", async ({ page }) => {
   await gotoWithAdminSession(page);
   await page.locator("#operator-account").fill("other@example.com");
   await page.locator("#goal-input").fill("Start operation now.");
   await expect(page.locator("#run-intent")).toBeDisabled();
-  await expect(page.locator("#workspace-status")).toContainText("operator boundary mismatch");
+  await expect(page.locator("#workspace-status")).toContainText("admin session owner mismatch");
   await expect(page.locator("#policy-box")).toContainText("standby");
   await expect(page.locator("#trace-list li")).toHaveCount(0);
   await expect(page.locator("#guard-toggle")).toBeChecked();

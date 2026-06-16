@@ -10,7 +10,6 @@ import {
   getAdminSession,
   getAdminSessionKey,
   isAdminSession,
-  isRegisteredOperator,
   sha256Hex,
   unlockAdminSession
 } from "./security.js";
@@ -187,12 +186,11 @@ async function parseAdminPermission() {
   if (!isAdminSession(session)) {
     return { allowed: false, reason: "session", details: "admin session not found", operator };
   }
+  if (!operator) {
+    return { allowed: false, reason: "operator-missing", details: "operator identity is required", operator };
+  }
   const fingerprint = await sha256Hex(operator);
   const ownerMatch = session.operatorFingerprint === fingerprint;
-  const boundMatch = await isRegisteredOperator(operator);
-  if (!boundMatch) {
-    return { allowed: false, reason: "boundary", details: "operator mismatch", operator };
-  }
   if (!ownerMatch) {
     return { allowed: false, reason: "session-owner", details: "session owner mismatch", operator };
   }
@@ -208,14 +206,14 @@ function updateWorkspaceStatus(permission) {
     removeWorkspaceLease();
     elements.runButton.disabled = true;
     if (elements.workspaceStatus) {
-      if (permission.reason === "session") {
-        elements.workspaceStatus.textContent = "Workspace lock: admin session is not active. Unlock with a private key first.";
-      } else if (permission.reason === "boundary") {
-        elements.workspaceStatus.textContent = "Workspace lock: operator boundary mismatch.";
-      } else if (permission.reason === "session-owner") {
-        elements.workspaceStatus.textContent = "Workspace lock: admin session owner mismatch.";
-      } else {
-        elements.workspaceStatus.textContent = "Workspace lock: blocked.";
+    if (permission.reason === "session") {
+      elements.workspaceStatus.textContent = "Workspace lock: admin session is not active. Unlock with a private key first.";
+    } else if (permission.reason === "operator-missing") {
+      elements.workspaceStatus.textContent = "Workspace lock: operator identity is required.";
+    } else if (permission.reason === "session-owner") {
+      elements.workspaceStatus.textContent = "Workspace lock: admin session owner mismatch.";
+    } else {
+      elements.workspaceStatus.textContent = "Workspace lock: blocked.";
       }
       elements.workspaceStatus.dataset.ok = "false";
     }
@@ -253,7 +251,7 @@ function updateWorkspaceStatus(permission) {
 function getBoundaryStateText(permission) {
   if (!permission.allowed) {
     if (permission.reason === "session") return "Admin session not unlocked";
-    if (permission.reason === "boundary") return "Operator not registered";
+    if (permission.reason === "operator-missing") return "Operator identity is required";
     if (permission.reason === "session-owner") return "Admin session does not match current operator";
     return "Boundary blocked";
   }
@@ -318,7 +316,7 @@ async function run() {
         error: "Blocked by admin boundary.",
         boundary: permission.operator,
         reason: permission.reason,
-        hint: "Unlock the admin session and confirm operator is the registered admin account."
+        hint: "Unlock the admin session with the operator identity and private key."
       },
       null,
       2

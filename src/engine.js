@@ -239,7 +239,7 @@ function buildReply({ intent, persona, prompt, boundaryVerified }) {
       : persona.role === "mcp_client"
         ? "[MCP Client]"
         : "[MCP Server]";
-  const boundaryStatus = boundaryVerified ? "registered admin account" : "admin boundary locked";
+  const boundaryStatus = boundaryVerified ? "admin session verified" : "admin boundary locked";
 
   return `${personaPrefix} ${message}\nInput summary: ${truncate(prompt, 160)}\nBoundary account: ${boundaryStatus}`;
 }
