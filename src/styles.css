@@ -498,6 +498,29 @@ input[type="email"] {
   padding: 1.1rem 1.3rem;
 }
 
+.admin-grid {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+#admin-status {
+  margin-bottom: 0;
+}
+
+#admin-private-key {
+  min-height: 150px;
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  white-space: pre;
+}
+
+#admin-status[data-ok="true"] {
+  color: #17663f;
+  border-color: rgba(22, 140, 80, 0.35);
+  background: rgba(30, 180, 90, 0.08);
+}
+
 .small {
   color: var(--muted);
   font-size: 0.9rem;

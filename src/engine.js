@@ -1,6 +1,4 @@
-﻿import { CONTRACTS } from "./contracts.js";
-
-const ACCOUNT_BOUNDARY_EMAIL = "nozomidevbusin@gmail.com";
+import { CONTRACTS } from "./contracts.js";
 
 const INJECTION_PATTERNS = [
   /ignore (all|previous) instructions/gi,
@@ -116,11 +114,15 @@ export function classifyIntent(prompt) {
   return "creation";
 }
 
-export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL }) {
+export function buildEnvelope({ mode, prompt, operator = "", operatorBoundary = "", boundaryVerified = false }) {
   const safeMode = MODE_SPEC[mode] ? mode : "openai-api";
   const persona = MODE_SPEC[safeMode];
   const contract = CONTRACTS[safeMode];
-  const safeOperator = String(operator || ACCOUNT_BOUNDARY_EMAIL).trim().toLowerCase();
+  const safeOperator = String(operator || "").trim().toLowerCase();
+  const safeBoundary = String(operatorBoundary || "").trim().toLowerCase();
+  const policyBoundary = safeBoundary || "admin-lock";
+  const guardMatch = boundaryVerified && Boolean(safeBoundary) && safeBoundary === safeOperator;
+
   const { sanitized, blockedSignals, riskScore } = sanitizePrompt(prompt);
   const intent = classifyIntent(sanitized);
   const traceId = buildTraceId();
@@ -137,8 +139,8 @@ export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL 
     timestamp,
     operator: safeOperator,
     policyIntent: persona.policyIntent,
-    accountBoundary: ACCOUNT_BOUNDARY_EMAIL,
-    guardMatch: safeOperator === ACCOUNT_BOUNDARY_EMAIL
+    accountBoundary: policyBoundary,
+    guardMatch
   };
 
   const commonPayload = {
@@ -146,7 +148,7 @@ export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL 
     traceId,
     filters: blockedSignals,
     operator: safeOperator,
-    accountBoundary: ACCOUNT_BOUNDARY_EMAIL,
+    accountBoundary: policyBoundary,
     policyIntent: persona.policyIntent
   };
 
@@ -192,7 +194,7 @@ export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL 
     traceId,
     policy,
     actionPlan: computeActionPlan(intent),
-    renderedReply: buildReply({ persona, intent, prompt: sanitized })
+    renderedReply: buildReply({ persona, intent, prompt: sanitized, operatorBoundary: policyBoundary, boundaryVerified: guardMatch })
   };
 
   if (safeMode === "openai-api") {
@@ -207,7 +209,7 @@ export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL 
           index: 0,
           message: {
             role: "assistant",
-            content: buildReply({ persona, intent, prompt: sanitized })
+            content: buildReply({ persona, intent, prompt: sanitized, operatorBoundary: policyBoundary, boundaryVerified: guardMatch })
           },
           finish_reason: "human_filtered"
         }
@@ -218,7 +220,7 @@ export function buildEnvelope({ mode, prompt, operator = ACCOUNT_BOUNDARY_EMAIL 
   return { envelope, policy, response, contract };
 }
 
-function buildReply({ intent, persona, prompt }) {
+function buildReply({ intent, persona, prompt, boundaryVerified }) {
   const base = {
     operational:
       "Operational intent received. Next step: create a concise execution checklist with risk, permission, and rollback notes.",
@@ -237,8 +239,9 @@ function buildReply({ intent, persona, prompt }) {
       : persona.role === "mcp_client"
         ? "[MCP Client]"
         : "[MCP Server]";
+  const boundaryStatus = boundaryVerified ? "registered admin account" : "admin boundary locked";
 
-  return `${personaPrefix} ${message}\nInput summary: ${truncate(prompt, 160)}\nBoundary account: ${ACCOUNT_BOUNDARY_EMAIL}`;
+  return `${personaPrefix} ${message}\nInput summary: ${truncate(prompt, 160)}\nBoundary account: ${boundaryStatus}`;
 }
 
 function computeActionPlan(intent) {
@@ -277,5 +280,4 @@ export function isModeSupported(mode) {
   return Object.prototype.hasOwnProperty.call(MODE_SPEC, mode);
 }
 
-export { MODE_SPEC, CONTRACTS, ACCOUNT_BOUNDARY_EMAIL };
-
+export { MODE_SPEC, CONTRACTS };

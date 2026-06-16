@@ -1,12 +1,5 @@
-﻿import { describe, expect, it } from "vitest";
-import {
-  buildEnvelope,
-  isModeSupported,
-  sanitizePrompt,
-  classifyIntent,
-  CONTRACTS,
-  ACCOUNT_BOUNDARY_EMAIL
-} from "../../src/engine.js";
+import { describe, expect, it } from "vitest";
+import { buildEnvelope, isModeSupported, sanitizePrompt, classifyIntent, CONTRACTS } from "../../src/engine.js";
 
 describe("engine", () => {
   it("filters jailbreak-like input", () => {
@@ -39,7 +32,7 @@ describe("engine", () => {
     const { envelope, policy, response, contract } = buildEnvelope({
       mode: "openai-api",
       prompt: "Prepare API response shape for retry handling.",
-      operator: ACCOUNT_BOUNDARY_EMAIL
+      operator: "operator@example.com"
     });
     expect(envelope.endpoint).toContain("/api/openai/v1/chat/completions");
     expect(envelope.payload.messages.length).toBe(2);
@@ -52,18 +45,21 @@ describe("engine", () => {
 
   it("keeps unrecognized mode as fallback", () => {
     expect(isModeSupported("wrong")).toBe(false);
-    const result = buildEnvelope({ mode: "wrong", prompt: "help me", operator: ACCOUNT_BOUNDARY_EMAIL });
+    const result = buildEnvelope({ mode: "wrong", prompt: "help me", operator: "operator@example.com" });
     expect(result.policy.allowedMode).toBe("openai-api");
   });
 
-  it("normalizes operator identity casing before policy envelope", () => {
+  it("keeps operator casing normalized and supports boundary-verified match", () => {
     const result = buildEnvelope({
       mode: "openai-api",
       prompt: "Normalize casing for operator test.",
-      operator: "NOZOMIDEVBUSIN@GMAIL.COM"
+      operator: "DEMO.OPERATOR@Example.com",
+      operatorBoundary: "demo.operator@example.com",
+      boundaryVerified: true
     });
-    expect(result.policy.operator).toBe(ACCOUNT_BOUNDARY_EMAIL);
+    expect(result.policy.operator).toBe("demo.operator@example.com");
     expect(result.policy.guardMatch).toBe(true);
+    expect(result.policy.accountBoundary).toBe("demo.operator@example.com");
   });
 
   it("contains all public contracts", () => {

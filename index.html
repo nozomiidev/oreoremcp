@@ -148,7 +148,7 @@
           <p id="policy-summary" class="muted-block"></p>
 
           <label for="operator-account">Operator account</label>
-          <input id="operator-account" type="email" placeholder="nozomidevbusin@gmail.com" />
+          <input id="operator-account" type="email" placeholder="operator@domain" />
           <label class="checkbox-row">
             <input id="guard-toggle" type="checkbox" checked disabled />
             <span>Boundary guard is always enabled for this workspace.</span>
@@ -225,11 +225,54 @@
         </article>
       </section>
 
+      <section class="policy-note surface" id="admin-gate">
+        <h2>Administrator gate</h2>
+        <p class="small">
+          Before running intent shaping, unlock the operator session with your private key and passphrase.
+          This keeps execution mode and history behavior under a local admin session instead of a fixed
+          account value in the UI.
+        </p>
+        <div class="admin-grid">
+          <label for="admin-passphrase">Admin passphrase</label>
+          <input id="admin-passphrase" type="password" placeholder="Minimum 8 characters" />
+
+          <label for="admin-private-key">Administrator private key (JWK JSON)</label>
+          <textarea
+            id="admin-private-key"
+            rows="8"
+            placeholder='{"kty":"RSA","n":"...","e":"AQAB","d":"..."}'
+          ></textarea>
+
+          <div class="control-row">
+            <button id="admin-unlock" class="button primary" type="button">Unlock admin session</button>
+            <button id="admin-lock" class="button ghost" type="button">Lock session</button>
+          </div>
+          <p id="admin-status" class="muted-block"></p>
+        </div>
+      </section>
+
+      <section class="policy-note surface" id="tutorial">
+        <h2>Quick operator tutorial</h2>
+        <ol>
+          <li>Set your operator account and unlock admin session using your private key.</li>
+          <li>Select a surface and input intent, then run shaping.</li>
+          <li>Copy or export payload logs for audit and evidence.</li>
+          <li>Use route aliases:
+            <ul>
+              <li><code>/mcp/client</code></li>
+              <li><code>/mcp/server</code></li>
+              <li><code>/api/openai/v1/chat/completions</code></li>
+              <li><code>/openaiapi</code>, <code>/opeaiapi</code>, <code>/oprenaiapi</code></li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
       <section class="policy-note surface" id="policy">
         <h2>Operational rule</h2>
         <p>
-          This service treats <strong>nozomidevbusin@gmail.com</strong> as the default operator boundary.
-          If the guard is enabled, other addresses are rejected before request shaping.
+          The operator boundary is stored as an internal workspace identity.
+          If the session is locked, non-registered operators or parallel windows are rejected before request shaping.
         </p>
         <p>
           A local operator lock keeps a single-window workflow active per account session, so parallel
