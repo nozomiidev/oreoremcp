@@ -1,0 +1,256 @@
+﻿<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OREO REMCP | Human-in-the-loop API Identity Gateway</title>
+    <meta
+      name="description"
+      content="Static service that presents MCP Client, MCP Server, and OpenAI-compatible facade as a human-first, observable interface."
+    />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Fraunces:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="aurora"></div>
+    <div class="noise"></div>
+    <main class="page-shell" id="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top">OREO REMCP</a>
+        <nav class="topnav">
+          <a href="#architecture">Architecture</a>
+          <a href="#contracts">Contracts</a>
+          <a href="#playground">Playground</a>
+          <a href="#policy">Policy</a>
+        </nav>
+      </header>
+
+      <section class="hero" id="top">
+        <p class="eyebrow">Static Protocol Interface / Human in the loop / Open by default</p>
+        <h1>
+          Your MCP Identity,<br />
+          Rebuilt for Human-First Public Operations
+        </h1>
+        <p class="subtitle">
+          This service is a lightweight landing and cockpit that separates
+          <strong>MCP Client</strong>, <strong>MCP Server</strong>, and
+          <strong>OpenAI API</strong> surfaces while keeping you as the operator.
+          You write intent, the service shapes it into explicit protocol envelopes, and every step remains auditable.
+        </p>
+        <div class="hero-actions">
+          <button class="button primary" id="enter-playground">Start now</button>
+          <a class="button ghost" href="#playground">Open cockpit</a>
+          <a class="button ghost" href="./mcp/server/" aria-label="Open MCP Server public entry">Open MCP Server entry</a>
+          <a class="button ghost" href="./mcp/client/" aria-label="Open MCP Client public entry">Open MCP Client entry</a>
+          <a class="button ghost" href="./api/openai/v1/chat/completions/" aria-label="Open OpenAI API facade public entry">Open OpenAI API entry</a>
+        </div>
+        <ul class="metric-list" id="metrics">
+          <li><strong>Purpose</strong><span>Human-driven protocol operations</span></li>
+          <li><strong>Safety</strong><span>Intent shaping and account boundary guard</span></li>
+          <li><strong>Quality</strong><span>Unit + e2e tests included</span></li>
+        </ul>
+      </section>
+
+      <section class="architecture-grid" id="architecture">
+        <article class="surface card">
+          <p class="label">MCP Client</p>
+          <h2>Entrance for inbound intent</h2>
+          <p>
+            Receives user input, normalizes it, extracts intent, and emits protocol-safe payloads for the next surface.
+            Operator policy, boundaries, and risk signals are surfaced immediately.
+          </p>
+          <p class="meta">Public endpoint: <code>/mcp/client</code></p>
+          <div class="surface-actions">
+            <button class="surface-pill" data-surface="mcp-client">Open MCP Client surface</button>
+            <a class="button ghost" href="./mcp/client/">Launch MCP Client route</a>
+          </div>
+        </article>
+        <article class="surface card">
+          <p class="label">MCP Server</p>
+          <h2>Execution-facing human shell</h2>
+          <p>
+            Exposes execution planning and action surfaces; the human operator confirms each step.
+            Every action is designed to stay transparent and reversible.
+          </p>
+          <p class="meta">Public endpoint: <code>/mcp/server</code></p>
+          <div class="surface-actions">
+            <button class="surface-pill" data-surface="mcp-server">Open MCP Server surface</button>
+            <a class="button ghost" href="./mcp/server/">Launch MCP Server route</a>
+          </div>
+        </article>
+        <article class="surface card">
+          <p class="label">OpenAI API Facade</p>
+          <h2>OpenAI-compatible API contract</h2>
+          <p>
+            Keeps external shape on <code>/api/openai/v1/chat/completions</code> while routing through human validation.
+            This preserves compatibility while preventing silent autonomous behavior.
+          </p>
+          <p class="meta">Public endpoint: <code>/api/openai/v1/chat/completions</code></p>
+          <div class="surface-actions">
+            <button class="surface-pill" data-surface="openai-api">Open OpenAI facade</button>
+            <a class="button ghost" href="./api/openai/v1/chat/completions/">Launch OpenAI API route</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="policy-note surface" id="surface-map">
+        <h2>Public surface map</h2>
+        <p class="small">A static identity gateway: visible contracts, mode-specific envelopes, and auditable traces.</p>
+        <ul class="endpoint-list">
+          <li><span>POST</span><code>/mcp/client</code> — MCP Client ingress for inbound intent normalization.</li>
+          <li><span>POST</span><code>/mcp/server</code> — MCP Server façade for execution-step orchestration.</li>
+          <li><span>POST</span><code>/api/openai/v1/chat/completions</code> — OpenAI-like API compatibility endpoint.</li>
+          <li><span>POST</span><code>/openaiapi</code> / <code>/opeaiapi</code> / <code>/oprenaiapi</code> — legacy typo-safe OpenAI aliases.</li>
+        </ul>
+      </section>
+
+      <section class="contract-grid surface" id="contracts">
+        <div class="contract-head">
+          <h2>Public Contracts (Schema)</h2>
+          <p>Use this as source-of-truth for how each surface is shaped.</p>
+        </div>
+        <div class="panels">
+          <div class="panel">
+            <h3>MCP Client Schema</h3>
+            <pre id="contract-client" class="codebox">loading...</pre>
+          </div>
+          <div class="panel">
+            <h3>MCP Server Schema</h3>
+            <pre id="contract-server" class="codebox">loading...</pre>
+          </div>
+          <div class="panel">
+            <h3>OpenAI API Schema</h3>
+            <pre id="contract-openai" class="codebox">loading...</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="playground surface" id="playground">
+        <div class="playground-head">
+          <h2>Protocol Cockpit</h2>
+          <p>Type one intent and watch three surfaces transform it into policy, envelope, and human response.</p>
+        </div>
+        <div class="controls">
+          <label for="persona">Mode</label>
+          <select id="persona">
+            <option value="mcp-client">Ore no MCP Client</option>
+            <option value="mcp-server">Ore no MCP Server</option>
+            <option value="openai-api">Ore no OpenAI API</option>
+          </select>
+
+          <label for="mode-status">Mode status</label>
+          <p id="mode-status" class="muted-block"></p>
+          <p id="policy-summary" class="muted-block"></p>
+
+          <label for="operator-account">Operator account</label>
+          <input id="operator-account" type="email" placeholder="nozomidevbusin@gmail.com" />
+          <label class="checkbox-row">
+            <input id="guard-toggle" type="checkbox" checked disabled />
+            <span>Boundary guard is always enabled for this workspace.</span>
+          </label>
+          <p id="account-status" class="muted-block"></p>
+          <p id="workspace-status" class="muted-block"></p>
+
+          <label for="goal-input">Input</label>
+          <textarea
+            id="goal-input"
+            rows="5"
+            placeholder="Write what you want the protocol surface to process."
+          ></textarea>
+
+          <div class="quick-intents">
+            <p class="small">Quick intent starters</p>
+            <div class="quick-grid">
+              <button
+                type="button"
+                class="surface-pill quick-chip"
+                data-quick-prompt
+                data-surface="mcp-client"
+                data-prompt="Normalize this onboarding request into MCP tasks and return a human-step plan."
+              >
+                MCP Client: onboard a new endpoint safely
+              </button>
+              <button
+                type="button"
+                class="surface-pill quick-chip"
+                data-quick-prompt
+                data-surface="mcp-server"
+                data-prompt="Prepare a reversible production rollout checklist with rollback and evidence checkpoints."
+              >
+                MCP Server: plan a safe rollout
+              </button>
+              <button
+                type="button"
+                class="surface-pill quick-chip"
+                data-quick-prompt
+                data-surface="openai-api"
+                data-prompt="Rewrite this into a strict OpenAI-compatible request body with validation and fallback policy."
+              >
+                OpenAI API: shape request payload
+              </button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <button id="run-intent" class="button primary">Run intent shaping</button>
+            <button id="copy-request" class="button ghost">Copy latest request</button>
+            <button id="export-log" class="button ghost">Export audit log</button>
+            <button id="clear-log" class="button ghost">Clear logs</button>
+          </div>
+        </div>
+
+        <div class="panels">
+          <div class="panel">
+            <h3>Filter / Policy</h3>
+            <pre id="policy-box" class="codebox">{ "status": "standby" }</pre>
+          </div>
+          <div class="panel">
+            <h3>MCP/API Envelope</h3>
+            <pre id="envelope-box" class="codebox">{ "status": "standby" }</pre>
+          </div>
+          <div class="panel">
+            <h3>Human Mode Response</h3>
+            <pre id="response-box" class="codebox">{ "status": "standby" }</pre>
+          </div>
+        </div>
+
+        <article class="agent-log">
+          <h3>Audit log (debug + admin)</h3>
+          <ul id="trace-list"></ul>
+        </article>
+      </section>
+
+      <section class="policy-note surface" id="policy">
+        <h2>Operational rule</h2>
+        <p>
+          This service treats <strong>nozomidevbusin@gmail.com</strong> as the default operator boundary.
+          If the guard is enabled, other addresses are rejected before request shaping.
+        </p>
+        <p>
+          A local operator lock keeps a single-window workflow active per account session, so parallel
+          windows in the same browser profile are rejected while shaping output.
+        </p>
+        <p class="small">
+          This is not a generative chatbot replacement. It is a protocol cockpit where humans
+          become the actor while the interface provides filtered, structured intent output.
+        </p>
+        <p class="small">
+          This is a static identity gateway: endpoint behavior and contracts are visible at a glance,
+          and execution is always operator-mediated.
+        </p>
+      </section>
+
+      <section class="footer-note">
+        <p>Product-grade static website for GitHub Pages, with contract-first design and debug-friendly logs.</p>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
+

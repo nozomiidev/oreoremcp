@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>OREO REMCP | MCP Client Entry</title>
+    <script>
+      (function () {
+        const next = new URL("./index.html", window.location.href);
+        next.searchParams.set("surface", "mcp-client");
+        window.location.replace(next);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to MCP Client surface...</p>
+    <a href="./index.html?surface=mcp-client">Continue to MCP Client</a>
+  </body>
+</html>
